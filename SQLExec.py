@@ -10,11 +10,14 @@ class Connection:
         self.options  = options
 
     def _buildCommand(self, options):
+        if self.options.password == '':
+            self.settings['args'] = self.settings['args'].replace(' -p{options.password}', '')
         return self.command + ' ' + ' '.join(options) + ' ' + self.settings['args'].format(options=self.options)
 
     def _getCommand(self, options, queries):
         command  = self._buildCommand(options)
-
+        queries = 'SET NAMES UTF8;' + queries
+        
         self.tmp = tempfile.NamedTemporaryFile(mode = 'w', delete = False)
         for query in queries:
             self.tmp.write(query)
